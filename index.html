@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UIS Aprende</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+}
+
+header{
+    background:#006633;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+header h1{
+    color:#FFD100;
+    margin-bottom:10px;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:30px auto;
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2{
+    color:#006633;
+    margin-bottom:15px;
+}
+
+select{
+    width:100%;
+    padding:12px;
+    margin-bottom:20px;
+    border:2px solid #006633;
+    border-radius:6px;
+    font-size:16px;
+}
+
+button{
+    background:#006633;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:#004d26;
+}
+
+.pregunta{
+    background:#fafafa;
+    padding:15px;
+    margin-bottom:20px;
+    border-left:6px solid #FFD100;
+    border-radius:6px;
+}
+
+.resultado{
+    margin-top:25px;
+    background:#e8f5e9;
+    padding:20px;
+    border-radius:10px;
+    border-left:6px solid #006633;
+}
+
+footer{
+    background:#006633;
+    color:white;
+    text-align:center;
+    padding:15px;
+    margin-top:40px;
+}
+
+ul{
+    margin-left:20px;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <h1>UIS APRENDE</h1>
+    <p>Plataforma de apoyo para fortalecer el aprendizaje autónomo</p>
+</header>
+
+<div class="container">
+
+    <h2>Seleccione una materia</h2>
+
+    <select id="materia" onchange="cargarPreguntas()">
+        <option value="">Seleccione una materia</option>
+        <option value="calculo">Cálculo I</option>
+        <option value="algebra">Álgebra Lineal</option>
+        <option value="fisica">Física I</option>
+    </select>
+
+    <div id="preguntas"></div>
+
+    <button onclick="calificar()">
+        Evaluar Diagnóstico
+    </button>
+
+    <div id="resultado"></div>
+
+</div>
+
+<footer>
+    Proyecto Académico - Plataforma de Repaso UIS
+</footer>
+
+<script>
+
+const bancoPreguntas = {
+
+calculo:[
+
+{
+pregunta:"¿Cuál es la derivada de x³?",
+opciones:["3x²","x²","3x"],
+correcta:0
+},
+
+{
+pregunta:"¿Cuál es la integral de x²?",
+opciones:["x³/3 + C","x² + C","2x + C"],
+correcta:0
+},
+
+{
+pregunta:"La derivada de sen(x) es:",
+opciones:["cos(x)","-cos(x)","sen(x)"],
+correcta:0
+},
+
+{
+pregunta:"Límite de (x²−1)/(x−1) cuando x→1",
+opciones:["2","1","0"],
+correcta:0
+},
+
+{
+pregunta:"¿Cuál es la integral de cos(x)?",
+opciones:["sen(x)+C","cos(x)+C","-sen(x)+C"],
+correcta:0
+}
+
+],
+
+algebra:[
+
+{
+pregunta:"¿Qué es una matriz?",
+opciones:[
+"Arreglo rectangular de números",
+"Ecuación diferencial",
+"Vector"
+],
+correcta:0
+},
+
+{
+pregunta:"Determinante de la matriz identidad 2x2",
+opciones:["1","0","2"],
+correcta:0
+},
+
+{
+pregunta:"Dos vectores son ortogonales si:",
+opciones:[
+"Su producto punto es cero",
+"Son iguales",
+"Tienen la misma longitud"
+],
+correcta:0
+},
+
+{
+pregunta:"Dimensión de R³",
+opciones:["3","2","1"],
+correcta:0
+},
+
+{
+pregunta:"La matriz identidad tiene:",
+opciones:[
+"Unos en la diagonal principal",
+"Todos ceros",
+"Todos unos"
+],
+correcta:0
+}
+
+],
+
+fisica:[
+
+{
+pregunta:"Unidad de fuerza",
+opciones:[
+"Newton",
+"Joule",
+"Watt"
+],
+correcta:0
+},
+
+{
+pregunta:"Segunda ley de Newton",
+opciones:[
+"F = ma",
+"E = mc²",
+"V = d/t"
+],
+correcta:0
+},
+
+{
+pregunta:"Unidad de velocidad",
+opciones:[
+"m/s",
+"kg",
+"N"
+],
+correcta:0
+},
+
+{
+pregunta:"Valor aproximado de la gravedad",
+opciones:[
+"9.8 m/s²",
+"98 m/s²",
+"0.98 m/s²"
+],
+correcta:0
+},
+
+{
+pregunta:"Energía cinética",
+opciones:[
+"½mv²",
+"mgh",
+"Fd"
+],
+correcta:0
+}
+
+]
+
+};
+
+function cargarPreguntas(){
+
+const materia = document.getElementById("materia").value;
+const contenedor = document.getElementById("preguntas");
+
+contenedor.innerHTML = "";
+
+if(!materia) return;
+
+bancoPreguntas[materia].forEach((pregunta,index)=>{
+
+let html = `
+<div class="pregunta">
+<p><strong>${index+1}. ${pregunta.pregunta}</strong></p>
+`;
+
+pregunta.opciones.forEach((opcion,i)=>{
+
+html += `
+<label>
+<input type="radio" name="p${index}" value="${i}">
+${opcion}
+</label>
+<br>
+`;
+
+});
+
+html += "</div>";
+
+contenedor.innerHTML += html;
+
+});
+
+}
+
+function calificar(){
+
+const materia = document.getElementById("materia").value;
+
+if(!materia){
+alert("Seleccione una materia");
+return;
+}
+
+let aciertos = 0;
+
+bancoPreguntas[materia].forEach((pregunta,index)=>{
+
+const respuesta = document.querySelector(
+`input[name="p${index}"]:checked`
+);
+
+if(
+respuesta &&
+Number(respuesta.value) === pregunta.correcta
+){
+aciertos++;
+}
+
+});
+
+const porcentaje = Math.round(
+(aciertos / bancoPreguntas[materia].length) * 100
+);
+
+let nivel = "";
+let recomendaciones = "";
+
+if(porcentaje >= 80){
+
+nivel = "Excelente";
+
+recomendaciones = `
+<ul>
+<li>Continúe con ejercicios avanzados.</li>
+<li>Está preparado para evaluaciones parciales.</li>
+<li>Fortalezca la resolución de problemas complejos.</li>
+</ul>
+`;
+
+}else if(porcentaje >= 50){
+
+nivel = "Intermedio";
+
+recomendaciones = `
+<ul>
+<li>Repase los temas donde tuvo errores.</li>
+<li>Practique más ejercicios guiados.</li>
+<li>Consulte material complementario.</li>
+</ul>
+`;
+
+}else{
+
+nivel = "Bajo";
+
+recomendaciones = `
+<ul>
+<li>Refuerce conceptos fundamentales.</li>
+<li>Revise teoría básica de la asignatura.</li>
+<li>Utilice recursos de apoyo y tutorías.</li>
+<li>Desarrolle ejercicios paso a paso.</li>
+</ul>
+`;
+
+}
+
+document.getElementById("resultado").innerHTML = `
+
+<div class="resultado">
+
+<h2>Resultado del Diagnóstico</h2>
+
+<p><strong>Aciertos:</strong> ${aciertos} de ${bancoPreguntas[materia].length}</p>
+
+<p><strong>Puntaje:</strong> ${porcentaje}%</p>
+
+<p><strong>Nivel:</strong> ${nivel}</p>
+
+<h3>Recomendaciones</h3>
+
+${recomendaciones}
+
+</div>
+
+`;
+
+}
+
+</script>
+
+</body>
+</html>
